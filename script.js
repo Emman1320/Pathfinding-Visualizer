@@ -4,15 +4,18 @@ const startCoordinates = [7, 18];
 const ROWSIZE = 16;
 const COLUMNSIZE = 38;
 const NO_OF_NODES = ROWSIZE * COLUMNSIZE;
-let adjacentMatrix = [];
+let selectedAlgorithm = "";
+// let adjacencyMatrix = [];
+let adjacencyList = [];
 
-//initialize adjacentMatrix with 0s
+// initialize adjacencyMatrix with 0s
 for (let i = 0; i < NO_OF_NODES; i++) {
   let row = [];
   for (let j = 0; j < NO_OF_NODES; j++) {
     row.push(0);
   }
-  adjacentMatrix.push(row);
+  // adjacencyMatrix.push(row);
+  adjacencyList.push([]);
 }
 
 // grid formation and fill adjacent matrix with 1 for every edge
@@ -23,22 +26,26 @@ for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
     const index = rowNumber * COLUMNSIZE + cellNumber;
     const topIndex = index - COLUMNSIZE;
     const bottomIndex = index + COLUMNSIZE;
-    
+
     if (topIndex >= 0) {
-      adjacentMatrix[index][topIndex] = 1;
-      adjacentMatrix[topIndex][index] = 1;
-    }
-    if (bottomIndex < NO_OF_NODES) {
-      adjacentMatrix[index][bottomIndex] = 1;
-      adjacentMatrix[bottomIndex][index] = 1;
-    }
-    if (index % COLUMNSIZE != 0) {
-      adjacentMatrix[index][index - 1] = 1;
-      adjacentMatrix[index - 1][index] = 1;
+      // adjacencyMatrix[index][topIndex] = 1;
+      // adjacencyMatrix[topIndex][index] = 1;
+      adjacencyList[index].push(topIndex);
     }
     if ((index + 1) % COLUMNSIZE != 0) {
-      adjacentMatrix[index][index + 1] = 1;
-      adjacentMatrix[index + 1][index] = 1;
+      // adjacencyMatrix[index][index + 1] = 1;
+      // adjacencyMatrix[index + 1][index] = 1;
+      adjacencyList[index].push(index + 1);
+    }
+    if (bottomIndex < NO_OF_NODES) {
+      // adjacencyMatrix[index][bottomIndex] = 1;
+      // adjacencyMatrix[bottomIndex][index] = 1;
+      adjacencyList[index].push(bottomIndex);
+    }
+    if (index % COLUMNSIZE != 0) {
+      // adjacencyMatrix[index][index - 1] = 1;
+      // adjacencyMatrix[index - 1][index] = 1;
+      adjacencyList[index].push(index - 1);
     }
   }
   gridHtml += "</tr>";
@@ -78,6 +85,7 @@ const cellArray = document.getElementsByClassName("grid-cell");
 //function to clear the board and stop the visualizer
 const clearBoard = () => {
   visualizerFlag = false;
+  startSymbol.draggable = true;
   startButton.innerText = "Start";
   startButton.disabled = false;
   for (let i = 0; i < NO_OF_NODES; i++) {
@@ -85,21 +93,26 @@ const clearBoard = () => {
   }
 };
 
-
 const pauseVisualizer = () => {
   visualizerFlag = false;
   startButton.innerText = "start";
   startButton.disabled = true;
 };
 
-const startVisualizerHandler = (e) => {
+const startVisualizerHandler = async (e) => {
   if (visualizerFlag) {
     pauseVisualizer();
   } else {
     visualizerFlag = true;
+    startSymbol.draggable = false;
     startButton.innerText = "Stop";
     const startNumber = startCoordinates[0] * COLUMNSIZE + startCoordinates[1];
-    bfsOfGraph(startNumber, NO_OF_NODES, adjacentMatrix, cellArray);
+    if (selectedAlgorithm === "Breadth First Search")
+      await bfsOfGraph(startNumber);
+    else if (selectedAlgorithm === "Depth First Search")
+      await dfsOfGraph(startNumber);
+    visualizerFlag = false;
+    startButton.innerText = "start";
   }
 };
 
@@ -115,3 +128,20 @@ startSymbol.draggable = true;
 startSymbol.addEventListener("dragstart", onDragStartNode);
 
 const startButton = document.getElementById("start-button");
+startButton.disabled = true;
+
+const dropdownElement = document.getElementById("dropdown-container");
+const selectAlgorithmButton = document.getElementById("select-algorithm");
+
+const dropdownHandler = (event) => {
+  if (dropdownElement.style.display == "none")
+    dropdownElement.style.display = "block";
+  else dropdownElement.style.display = "none";
+};
+
+const selectAlgorithmHandler = (algorithm) => {
+  selectedAlgorithm = algorithm;
+  selectAlgorithmButton.children[0].innerText = algorithm;
+  startButton.disabled = false;
+  dropdownElement.style.display = "none";
+};
