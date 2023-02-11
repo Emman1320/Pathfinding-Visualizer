@@ -23,7 +23,7 @@ for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
     const index = rowNumber * COLUMNSIZE + cellNumber;
     const topIndex = index - COLUMNSIZE;
     const bottomIndex = index + COLUMNSIZE;
-
+    
     if (topIndex >= 0) {
       adjacentMatrix[index][topIndex] = 1;
       adjacentMatrix[topIndex][index] = 1;
@@ -43,52 +43,66 @@ for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
   }
   gridHtml += "</tr>";
 }
+document.getElementById("grid-container").innerHTML = gridHtml;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 // function pausecomp(millis)
 // {
-  //     var date = new Date();
-  //     var curDate = null;
-  //     do { curDate = new Date(); }
-  //     while(curDate-date < millis);
-  // }
-  
-  const allowDropHandler = (event) => {
-    event.preventDefault();
-  };
-  
-  const onDragStartNode = (event) => {};
-  
-  const onDropStartNode = (event) => {
-    event.preventDefault();
-    event.target.appendChild(startSymbol);
-    startNodeElement.className = "grid-cell";
-    startNodeElement = event.target;
-    startNodeElement.className = "grid-cell start-node";
-    startCoordinates[0] = +startNodeElement.id.split("-")[1];
-    startCoordinates[1] = +startNodeElement.id.split("-")[2];
-  };
-  
-  // array of grid cells DOM
-  const cellArray = document.getElementsByClassName("grid-cell");
+//     var date = new Date();
+//     var curDate = null;
+//     do { curDate = new Date(); }
+//     while(curDate-date < millis);
+// }
 
-  //function to clear the board and stop the visualizer
-  const clearBoard = () => {
-    visualizerFlag = false;
-    for (let i = 0; i < NO_OF_NODES; i++) {
-      cellArray[i].className = "grid-cell";
-    }
-  };
-  
-  document.getElementById("grid-container").innerHTML = gridHtml;
-  const startVisualizerHandler = (e) => {
+const allowDropHandler = (event) => {
+  event.preventDefault();
+};
+
+const onDragStartNode = (event) => {};
+
+const onDropStartNode = (event) => {
+  event.preventDefault();
+  event.target.appendChild(startSymbol);
+  startNodeElement.className = "grid-cell";
+  startNodeElement = event.target;
+  startNodeElement.className = "grid-cell start-node";
+  startCoordinates[0] = +startNodeElement.id.split("-")[1];
+  startCoordinates[1] = +startNodeElement.id.split("-")[2];
+};
+
+// array of grid cells DOM
+const cellArray = document.getElementsByClassName("grid-cell");
+
+//function to clear the board and stop the visualizer
+const clearBoard = () => {
+  visualizerFlag = false;
+  startButton.innerText = "Start";
+  startButton.disabled = false;
+  for (let i = 0; i < NO_OF_NODES; i++) {
+    cellArray[i].className = "grid-cell";
+  }
+};
+
+
+const pauseVisualizer = () => {
+  visualizerFlag = false;
+  startButton.innerText = "start";
+  startButton.disabled = true;
+};
+
+const startVisualizerHandler = (e) => {
+  if (visualizerFlag) {
+    pauseVisualizer();
+  } else {
     visualizerFlag = true;
+    startButton.innerText = "Stop";
     const startNumber = startCoordinates[0] * COLUMNSIZE + startCoordinates[1];
     bfsOfGraph(startNumber, NO_OF_NODES, adjacentMatrix, cellArray);
-  };
-  
+  }
+};
+
 //the starting cell
 let startNodeElement = document.getElementById(
   `cell-${startCoordinates[0]}-${startCoordinates[1]}`
@@ -100,4 +114,4 @@ let startSymbol = startNodeElement.firstChild;
 startSymbol.draggable = true;
 startSymbol.addEventListener("dragstart", onDragStartNode);
 
-
+const startButton = document.getElementById("start-button");

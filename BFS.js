@@ -26,4 +26,6 @@ const bfsOfGraph = async (startNode, V, adj, cellArray) => {
       }
     }
   }
+  visualizerFlag = false;
+  startButton.innerText = "start";
 };
