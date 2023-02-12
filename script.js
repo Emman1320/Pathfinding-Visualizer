@@ -84,10 +84,10 @@ const cellArray = document.getElementsByClassName("grid-cell");
 
 //function to clear the board and stop the visualizer
 const clearBoard = () => {
+  startButton.disabled = false;
   visualizerFlag = false;
   startSymbol.draggable = true;
   startButton.innerText = "Start";
-  startButton.disabled = false;
   for (let i = 0; i < NO_OF_NODES; i++) {
     cellArray[i].className = "grid-cell";
   }
@@ -128,12 +128,15 @@ startSymbol.draggable = true;
 startSymbol.addEventListener("dragstart", onDragStartNode);
 
 const startButton = document.getElementById("start-button");
+const clearBoardButton = document.getElementById("clearBoard-button");
 startButton.disabled = true;
+clearBoardButton.disabled = true;
 
 const dropdownElement = document.getElementById("dropdown-container");
 const selectAlgorithmButton = document.getElementById("select-algorithm");
 
 const dropdownHandler = (event) => {
+  console.log("hello");
   if (dropdownElement.style.display == "none")
     dropdownElement.style.display = "block";
   else dropdownElement.style.display = "none";
@@ -143,5 +146,6 @@ const selectAlgorithmHandler = (algorithm) => {
   selectedAlgorithm = algorithm;
   selectAlgorithmButton.children[0].innerText = algorithm;
   startButton.disabled = false;
+  clearBoardButton.disabled = false;
   dropdownElement.style.display = "none";
 };

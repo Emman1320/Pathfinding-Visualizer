@@ -10,7 +10,7 @@
   <body>
     <nav>
       <div class="logo">MINI</div>
-      <div class="vis-actions"> 
+      <div class="vis-actions">
         <div id="select-algorithm-container">
           <button
             onclick="dropdownHandler(this)"
@@ -25,7 +25,7 @@
             />
           </button>
           <div id="dropdown-container" style="display: none">
-            <div class="dropdown" >
+            <div class="dropdown" tabindex="0" onblur="dropdownHandler(this)">
               <div
                 onclick="selectAlgorithmHandler('Depth First Search')"
                 class="dropdown-option"
@@ -41,7 +41,13 @@
             </div>
           </div>
         </div>
-        <button class="button-style" onclick="clearBoard()">Clear Board</button>
+        <button
+          class="button-style"
+          id="clearBoard-button"
+          onclick="clearBoard()"
+        >
+          Clear Board
+        </button>
         <button
           class="button-style"
           id="start-button"
