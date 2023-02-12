@@ -136,10 +136,12 @@ const dropdownElement = document.getElementById("dropdown-container");
 const selectAlgorithmButton = document.getElementById("select-algorithm");
 
 const dropdownHandler = (event) => {
-  console.log("hello");
   if (dropdownElement.style.display == "none")
     dropdownElement.style.display = "block";
   else dropdownElement.style.display = "none";
+};
+const onBlurDropdownHandler = () => {
+  dropdownElement.style.display = "none";
 };
 
 const selectAlgorithmHandler = (algorithm) => {
@@ -147,5 +149,5 @@ const selectAlgorithmHandler = (algorithm) => {
   selectAlgorithmButton.children[0].innerText = algorithm;
   startButton.disabled = false;
   clearBoardButton.disabled = false;
-  dropdownElement.style.display = "none";
+  // dropdownElement.style.display = "none";
 };
