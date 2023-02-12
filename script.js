@@ -10,10 +10,10 @@ let adjacencyList = [];
 
 // initialize adjacencyMatrix with 0s
 for (let i = 0; i < NO_OF_NODES; i++) {
-  let row = [];
+  /*let row = [];
   for (let j = 0; j < NO_OF_NODES; j++) {
     row.push(0);
-  }
+  }*/
   // adjacencyMatrix.push(row);
   adjacencyList.push([]);
 }
