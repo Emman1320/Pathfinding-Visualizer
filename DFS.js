@@ -1,27 +1,31 @@
-const visitNodeDFS = async (node, visited) => {
-  cellArray[node].className = "grid-cell visited";
-  visited[node] = true;
-  await sleep(50);
+const visitNodeDFS = async (node) => {
+  cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell visited";
+  node.isVisited = true;
+  await sleep(SPEED);
 };
-const dfsOfGraph = async (startNumber) => {
-  const visited = [];
-  for (let i = 0; i < NO_OF_NODES; i++) {
-    visited.push(false);
-  }
-  const stack = [];
-  stack.push(startNumber);
-  while (stack.length) {
+const dfsOfGraph = async () => {
+  const stack = [grid[startCoordinates[0]][startCoordinates[1]]];
+  while (stack.length && visualizerFlag) {
     let node = stack.pop();
-    if (visualizerFlag) {
-      await visitNodeDFS(node, visited);
-      for (let i = adjacencyList[node].length - 1; i >= 0; i--) {
-        const childNode = adjacencyList[node][i];
-        if (!visited[childNode]) {
-          stack.push(childNode);
-        }
-      }
-    } else {
-      return;
+    await visitNodeDFS(node);
+    if (node.isFinish || !visualizerFlag) return;
+    const i = node.row;
+    const j = node.col;
+    if (j !== 0 && !grid[i][j - 1].isVisited && !grid[i][j - 1].isWall) {
+      stack.push(grid[i][j - 1]);
+      grid[i][j - 1].previousNode = node;
+    }
+    if (i !== ROWSIZE - 1 && !grid[i + 1][j].isVisited && !grid[i + 1][j].isWall) {
+      stack.push(grid[i + 1][j]);
+      grid[i + 1][j].previousNode = node;
+    }
+    if (j !== COLUMNSIZE - 1 && !grid[i][j + 1].isVisited && !grid[i][j + 1].isWall) {
+      stack.push(grid[i][j + 1]);
+      grid[i][j + 1].previousNode = node;
+    }
+    if (i !== 0 && !grid[i - 1][j].isVisited && !grid[i - 1][j].isWall) {
+      stack.push(grid[i - 1][j]);
+      grid[i - 1][j].previousNode = node;
     }
   }
 };
