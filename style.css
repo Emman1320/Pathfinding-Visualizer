@@ -193,9 +193,12 @@ nav {
   height: 100%;
 }
 /* .grid-cell.visited {
-  animation: twinkle 0.1s ease forwards;
+  animation: twinkle 0.05s ease forwards;
 } */
 .visited .grid-cell-animation-node {
+  animation: visited-gradient 1.5s ease-out alternate forwards;
+}
+.revisited .grid-cell-animation-node {
   animation: visited-gradient 1.5s ease-out alternate forwards;
 }
 .visited #dest-node-image,
@@ -215,7 +218,7 @@ nav {
 }
 /* @keyframes twinkle {
   0% {
-    background-color: rgb(255, 255, 121);
+    background-color: rgba(255, 255, 0, 0.436);
   }
   100% {
     background-color: white;
@@ -269,24 +272,45 @@ nav {
     border-radius: 0;
   }
 }
-@keyframes visited-gradient {
+/* @keyframes visited-gradient {
   0% {
     transform: scale(0.3);
-    background-color: #52006a;
+    background-color: #460c68;
     border-radius: 100%;
   }
 
   50% {
-    background-color: #cd113b;
+    background-color: #7f167f;
   }
 
   75% {
     transform: scale(1.2);
-    background-color: #ffa900;
+    background-color: #f56eb3;
   }
 
   100% {
     transform: scale(1);
-    background-color: #ff6600;
+    background-color: #cb1c8d;
+  }
+} */
+@keyframes visited-gradient {
+  0% {
+    transform: scale(0.3);
+    background-color: #9a1663;
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: #e0144c;
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: #ff97c1;
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: #ff5858;
   }
 }

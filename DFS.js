@@ -1,4 +1,8 @@
 const visitNodeDFS = async (node) => {
+  if (node.isVisited) {
+    cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell";
+    await sleep(5);
+  }
   cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell visited";
   node.isVisited = true;
   await sleep(SPEED);

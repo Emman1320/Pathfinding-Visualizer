@@ -1,6 +1,6 @@
 let gridHtml = "";
 let visualizerFlag = false;
-const startCoordinates = [10,16];
+const startCoordinates = [10, 16];
 const destCoordinates = [10, 39];
 const ROWSIZE = 23;
 const COLUMNSIZE = 55;
@@ -99,7 +99,7 @@ const wallTheCell = (e, i, j) => {
 const addWeightToCell = (e, i, j) => {
   if (eraseGrid) {
     if (e.childNodes[1])
-    e.removeChild(e.childNodes[1]);
+      e.removeChild(e.childNodes[1]);
     grid[i][j].weight = 0;
     cellArray[i * COLUMNSIZE + j].className = "grid-cell";
     return;
@@ -166,7 +166,7 @@ const cellArray = document.getElementsByClassName("grid-cell");
 //function to clear the board and stop the visualizer
 const clearBoard = () => {
   visualizerFlag = false;
-  startSymbol.draggable = true; 
+  startSymbol.draggable = true;
   startButton.innerText = "Start";
   for (let i = 0; i < NO_OF_NODES; i++) {
     let row = Math.floor(i / COLUMNSIZE);
@@ -174,7 +174,7 @@ const clearBoard = () => {
     cellArray[i].className = "grid-cell";
     grid[row][col].isWall = false;
     grid[row][col].isVisited = false;
-    if (grid[row][col].weight) {  
+    if (grid[row][col].weight) {
       grid[row][col].weight = 0;
       cellArray[i].removeChild(cellArray[i].childNodes[1]);
     }
@@ -187,7 +187,8 @@ const resetVisualization = () => {
       if (grid[i][j].isVisited) {
         grid[i][j].isVisited = false;
         grid[i][j].previousNode = null;
-        cellArray[i * COLUMNSIZE + j].className = "grid-cell";
+        if (!grid[i][j].isWall && !grid[i][j].weight)
+          cellArray[i * COLUMNSIZE + j].className = "grid-cell";
       }
     }
   }
@@ -229,7 +230,7 @@ const drawShortestPath = async () => {
   for (let i = 0; i < shortestPathArray.length && visualizerFlag; i++) {
     node = shortestPathArray[i];
     cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell shortestPath";
-    await sleep(50);
+    await sleep(20);
   }
 }
 
