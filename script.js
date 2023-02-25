@@ -30,17 +30,6 @@ const createNode = (row, col) => {
   };
 };
 
-
-// initialize adjacencyMatrix with 0s
-for (let i = 0; i < NO_OF_NODES; i++) {
-  /*let row = [];
-  for (let j = 0; j < NO_OF_NODES; j++) {
-    row.push(0);
-  }*/
-  // adjacencyMatrix.push(row);
-  adjacencyList.push([]);
-}
-
 // grid formation and fill adjacent matrix with 1 for every edge
 for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
   gridHtml += `<div class="grid-row" id='row-${rowNumber}'>`;
