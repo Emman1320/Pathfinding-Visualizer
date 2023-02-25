@@ -323,6 +323,24 @@ nav {
     height: 100%;
   }
 }
+@media only screen and (max-width: 1400px) {
+  body {
+    zoom: 0.77;
+  }
+  .button-style {
+    padding: 10px 16px;
+  }
+  nav {
+    height: 12vh;
+  }
+  .grid-container {
+    height: 116vh;
+  }
+  .grid-cell {
+    width: 29px;
+    height: 29px;
+  }
+}
 /* @media only screen and (max-width: 1700px) {
   .grid-cell {
     width: 28px;
