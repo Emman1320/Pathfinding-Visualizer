@@ -42,9 +42,8 @@ const dijkstra = async () => {
         const j = node.col;
         cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell visited";
         if (node.isFinish || !visualizerFlag) return;
-
         await sleep(SPEED);
-
+      
         if (i !== 0)
             updateNode(queue, node, grid[i - 1][j]);
 
@@ -57,17 +56,5 @@ const dijkstra = async () => {
         if (j !== 0)
             updateNode(queue, node, grid[i][j - 1]);
 
-        // let s = "";
-        // for (let i = 0; i < queue.length; i++) {
-        //     s += `[${queue[i].row},${queue[i].col}]${queue[i].distance}`;
-        // }
-        // console.log(s);
     }
-    // for (let i = 0; i < ROWSIZE; i++) {
-    //     let s = "";
-    //     for (let j = 0; j < COLUMNSIZE; j++) {
-    //         s += grid[i][j].distance + " "
-    //     }
-    //     console.log(s);
-    // }
 };

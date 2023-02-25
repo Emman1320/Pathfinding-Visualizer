@@ -8,6 +8,8 @@ const COLUMNSIZE = 55;
 // const destCoordinates = [2, 3];
 // const ROWSIZE = 4;
 // const COLUMNSIZE = 4;
+
+
 const SPEED = 0;
 const WEIGHT = 15;
 let clickedDraggableNodes = false;
@@ -41,6 +43,7 @@ for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
   gridHtml += "</div>";
 }
 
+
 document.getElementById("grid").innerHTML = gridHtml;
 document.getElementById("grid").addEventListener("dragstart", (e) => {
   if (!clickedDraggableNodes)
@@ -49,6 +52,7 @@ document.getElementById("grid").addEventListener("dragstart", (e) => {
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
 
 const weightToggle = (e) => {
   if (weightKeyPressed) {
@@ -64,6 +68,10 @@ let eraseGrid = false;
 const gridTouchHandler = (e, isClicked) => {
   clickedGrid = isClicked;
 };
+const clearTheWall = (e, i, j) => {
+  grid[i][j].isWall = false;
+  e.className = "grid-cell visited";
+}
 const wallTheCell = (e, i, j) => {
   let cell = grid[i][j];
   if (cell.weight) {
@@ -137,6 +145,8 @@ const onDropNode = (event) => {
     grid[startCoordinates[0]][startCoordinates[1]].isStart = false;
     startCoordinates[0] = +startNodeElement.id.split("-")[1];
     startCoordinates[1] = +startNodeElement.id.split("-")[2];
+    startNodeElement.className = "grid-cell";
+    grid[startCoordinates[0]][startCoordinates[1]].isWall = false;
     grid[startCoordinates[0]][startCoordinates[1]].isStart = true;
   } else if (nodeOnDrag == "destNode") {
     destNodeElement = event.target.parentElement;
@@ -144,6 +154,8 @@ const onDropNode = (event) => {
     grid[destCoordinates[0]][destCoordinates[1]].isFinish = false;
     destCoordinates[0] = +destNodeElement.id.split("-")[1];
     destCoordinates[1] = +destNodeElement.id.split("-")[2];
+    destNodeElement.className = "grid-cell";
+    grid[destCoordinates[0]][destCoordinates[1]].isWall = false;
     grid[destCoordinates[0]][destCoordinates[1]].isFinish = true;
   }
   clickedDraggableNodes = false;
@@ -170,9 +182,13 @@ const clearBoard = () => {
   }
 };
 
+const onGenerateMaze = async () => {
+  await MazeAlgorithm();
+}
+
 const resetVisualization = () => {
   for (let i = 0; i < ROWSIZE; i++) {
-    for (let j = 0; j < COLUMNSIZE; j++) {
+    for (let j = 0; j < COLUMNSIZE; j++) {  
       if (grid[i][j].isVisited) {
         grid[i][j].isVisited = false;
         grid[i][j].previousNode = null;
@@ -212,6 +228,7 @@ const startVisualizerHandler = async (e) => {
 const drawShortestPath = async () => {
   let node = grid[destCoordinates[0]][destCoordinates[1]];
   let shortestPathArray = [];
+  console.log(node);
   while (node != null) {
     shortestPathArray.unshift(node);
     node = node.previousNode;
@@ -254,6 +271,7 @@ destSymbol.addEventListener("dragstart", () => {
 const startButton = document.getElementById("start-button");
 const clearBoardButton = document.getElementById("clearBoard-button");
 const resetBoardButton = document.getElementById("reset-button");
+const mazeBoardButton = document.getElementById("maze-button");
 const drawBoardButton = document.getElementById("draw-button");
 startButton.disabled = true;
 

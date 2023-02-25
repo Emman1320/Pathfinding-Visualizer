@@ -45,6 +45,13 @@
         </div>
         <button
           class="button-style"
+          id="maze-button"
+          onclick="onGenerateMaze(this)"
+        >
+          draw random maze
+        </button>
+        <button
+          class="button-style"
           id="draw-button"
           onclick="weightToggle(this)"
         >
@@ -85,6 +92,7 @@
     <script src="./BFS.js"></script>
     <script src="./DFS.js"></script>
     <script src="./Dijkstra.js"></script>
+    <script src="./MazeAlgorithm.js"></script>
     <script src="./algorithmsHandler.js"></script>
   </body>
 </html>
