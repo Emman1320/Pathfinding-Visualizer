@@ -24,7 +24,7 @@ const randomizedDFS = async (rivery) => {
         if (rivery) {
             node = stack.pop();
         } else {
-            if (Math.random() < 0.6)
+            if (Math.random() < 0.8)
                 node = stack.pop();
             else
                 node = stack.splice(parseInt(Math.random() * stack.length), 1)[0];

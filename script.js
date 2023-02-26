@@ -315,8 +315,11 @@ const selectPatternHandler = async (pattern) => {
   if (selectedAlgorithm.length)
     startButton.disabled = true;
   switch (pattern) {
-    case "Randomized DFS":
+    case "Randomized DFS (high river)":
       await randomizedDFS(true);
+      break;
+    case "Randomized DFS (more branches)":
+      await randomizedDFS(false);
       break;
     case "Prim's Algorithm":
       await PrimsMaze();

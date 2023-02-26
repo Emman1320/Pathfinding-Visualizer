@@ -44,7 +44,7 @@ const PrimsMaze = async () => {
     const queue = [startNode];
     startNode.isVisited = true;
     startNode.distance = 0;
-    startNode.previousNode = null   ;
+    startNode.previousNode = null;
     while (queue.length) {
         let node = queue.pop();
         const i = node.row;
