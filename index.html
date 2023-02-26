@@ -11,8 +11,14 @@
     <nav>
       <div class="logo">MINI</div>
       <div class="vis-actions">
-        <div id="select-algorithm-container" onclick="dropdownHandler(this)">
-          <button class="button-style" id="select-algorithm">
+        <div
+          id="select-algorithm-container"
+          class="dropdown-button-container"
+          tabindex="0"
+          onblur="onBlurSelectAlgorithmDropdownHandler(this)"
+          onclick="selectAlgorithmDropdownHandler(this)"
+        >
+          <button class="button-style dropdown-button" id="select-algorithm">
             <span>Select Algorithm</span>
             <img
               src="./assets/expand_symbol.png"
@@ -20,7 +26,11 @@
               alt=""
             />
           </button>
-          <div id="dropdown-container" style="display: none">
+          <div
+            id="select-algorithm-dropdown-container"
+            class="dropdown-container"
+            style="display: none"
+          >
             <div class="dropdown">
               <div
                 onclick="selectAlgorithmHandler('Depth First Search')"
@@ -43,13 +53,54 @@
             </div>
           </div>
         </div>
-        <button
-          class="button-style"
-          id="maze-button"
-          onclick="onGenerateMaze(this)"
+        <div
+          id="pattern-algorithm-container"
+          class="dropdown-button-container"
+          tabindex="0"
+          onblur="onBlurSelectPatternDropdownHandler(this)"
+          onclick="selectPatternDropdownHandler(this)"
         >
-          draw random maze
-        </button>
+          <button class="button-style dropdown-button" id="select-pattern">
+            <span>draw pattern</span>
+            <img
+              src="./assets/expand_symbol.png"
+              class="expand-symbol"
+              alt=""
+            />
+          </button>
+          <div
+            id="select-pattern-dropdown-container"
+            class="dropdown-container"
+            style="display: none"
+          >
+            <div class="dropdown">
+              <div
+                onclick="selectPatternHandler('Prim\'s Algorithm')"
+                class="dropdown-option"
+              >
+                Prim's Algorithm
+              </div>
+              <div
+                onclick="selectPatternHandler('Randomized DFS')"
+                class="dropdown-option"
+              >
+                Randomized DFS
+              </div>
+              <div
+                onclick="selectPatternHandler('Recursive Division')"
+                class="dropdown-option"
+              >
+                Recursive Division
+              </div>
+              <div
+                onclick="selectPatternHandler('Random weights')"
+                class="dropdown-option"
+              >
+                Random weights
+              </div>
+            </div>
+          </div>
+        </div>
         <button
           class="button-style"
           id="draw-button"
@@ -92,7 +143,7 @@
     <script src="./BFS.js"></script>
     <script src="./DFS.js"></script>
     <script src="./Dijkstra.js"></script>
-    <script src="./MazeAlgorithm.js"></script>
+    <script src="./PrimsMaze.js"></script>
     <script src="./algorithmsHandler.js"></script>
   </body>
 </html>

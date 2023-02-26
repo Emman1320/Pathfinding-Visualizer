@@ -66,16 +66,20 @@ body {
 }
 /* #dest-node-image {
 } */
-#select-algorithm-container {
+.dropdown-button-container {
   position: relative;
+  display: flex;
+  z-index: 1;
+  justify-content: center;
 }
-#select-algorithm {
+.dropdown-button {
   display: flex;
   align-items: center;
   gap: 3px;
 }
-#dropdown-container {
+.dropdown-container {
   position: absolute;
+  margin-top: 3.3rem;
   z-index: 1;
   width: 100%;
 }
@@ -91,6 +95,9 @@ body {
   margin-top: 5px;
   padding: 0.7rem 0;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+#select-pattern-dropdown-container {
+  width: 130%;
 }
 
 .dropdown-option {

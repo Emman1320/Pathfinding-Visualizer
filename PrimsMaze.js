@@ -28,20 +28,9 @@ const updateMazeNode = (queue, parentNode, node) => {
     }
 };
 
-const MazeAlgorithm = async () => {
-    mazeBoardButton.disabled = true;
-    clearBoardButton.disabled = true;
-    if (selectedAlgorithm.length)
-        startButton.disabled = true;
+const PrimsMaze = async () => {
     for (let i = 0; i < ROWSIZE; i++) {
         for (let j = 0; j < COLUMNSIZE; j++) {
-            cellArray[i * COLUMNSIZE + j].className = "grid-cell";
-            grid[i][j].isWall = false;
-            grid[i][j].isVisited = false;
-            if (grid[i][j].weight) {
-                grid[i][j].weight = 0;
-                cellArray[i * COLUMNSIZE + j].removeChild(cellArray[i * COLUMNSIZE + j].childNodes[1]);
-            }
             if (i % 2 == 0 || j % 2 == 0) {
                 grid[i][j].isWall = true;
             } else {
@@ -92,8 +81,5 @@ const MazeAlgorithm = async () => {
             grid[i][j].weight = 0;
         }
     }
-    mazeBoardButton.disabled = false;
-    clearBoardButton.disabled = false;
-    if (selectedAlgorithm.length)
-        startButton.disabled = false;
+
 };

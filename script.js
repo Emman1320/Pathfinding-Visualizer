@@ -2,6 +2,7 @@ let gridHtml = "";
 let visualizerFlag = false;
 const startCoordinates = [10, 16];
 const destCoordinates = [10, 39];
+
 const ROWSIZE = 23;
 const COLUMNSIZE = 55;
 // const startCoordinates = [2, 1];
@@ -16,6 +17,7 @@ let clickedDraggableNodes = false;
 const NO_OF_NODES = ROWSIZE * COLUMNSIZE;
 let weightKeyPressed = false;
 let selectedAlgorithm = "";
+let selectedPattern = "";
 let nodeOnDrag = "";
 let grid = [];
 const createNode = (row, col) => {
@@ -122,6 +124,7 @@ const onHoverCell = (e, i, j) => {
 };
 
 const onClickCell = (e, i, j) => {
+  console.log(grid[i][j].isStart );
   if (grid[i][j].isStart || grid[i][j].isFinish) { clickedDraggableNodes = true };
   if (grid[i][j].isWall || grid[i][j].weight) eraseGrid = true;
   else eraseGrid = false;
@@ -145,7 +148,6 @@ const onDropNode = (event) => {
     grid[startCoordinates[0]][startCoordinates[1]].isStart = false;
     startCoordinates[0] = +startNodeElement.id.split("-")[1];
     startCoordinates[1] = +startNodeElement.id.split("-")[2];
-    startNodeElement.className = "grid-cell";
     grid[startCoordinates[0]][startCoordinates[1]].isWall = false;
     grid[startCoordinates[0]][startCoordinates[1]].isStart = true;
   } else if (nodeOnDrag == "destNode") {
@@ -154,7 +156,6 @@ const onDropNode = (event) => {
     grid[destCoordinates[0]][destCoordinates[1]].isFinish = false;
     destCoordinates[0] = +destNodeElement.id.split("-")[1];
     destCoordinates[1] = +destNodeElement.id.split("-")[2];
-    destNodeElement.className = "grid-cell";
     grid[destCoordinates[0]][destCoordinates[1]].isWall = false;
     grid[destCoordinates[0]][destCoordinates[1]].isFinish = true;
   }
@@ -163,6 +164,22 @@ const onDropNode = (event) => {
 
 // array of grid cells DOM
 const cellArray = document.getElementsByClassName("grid-cell");
+
+const assignRandomWeights = async () => {
+  for (let i = 0; i < ROWSIZE; i++) {
+    for (let j = 0; j < COLUMNSIZE; j++) {
+      cellArray[i * COLUMNSIZE + j].className = "grid-cell";
+      grid[i][j].isWall = false;
+      grid[i][j].isVisited = false;
+      if (grid[i][j].weight) {
+        grid[i][j].weight = 0;
+        cellArray[i].removeChild(cellArray[i * COLUMNSIZE + j].childNodes[1]);
+      }
+      if (Math.random() > 0.7)
+        addWeightToCell(cellArray[i * COLUMNSIZE + j], i, j);
+    }
+  }
+}
 
 //function to clear the board and stop the visualizer
 const clearBoard = () => {
@@ -182,18 +199,18 @@ const clearBoard = () => {
   }
 };
 
-const onGenerateMaze = async () => {
-  await MazeAlgorithm();
-}
 
 const resetVisualization = () => {
   for (let i = 0; i < ROWSIZE; i++) {
-    for (let j = 0; j < COLUMNSIZE; j++) {  
+    for (let j = 0; j < COLUMNSIZE; j++) {
       if (grid[i][j].isVisited) {
-        grid[i][j].isVisited = false;
         grid[i][j].previousNode = null;
         if (!grid[i][j].isWall && !grid[i][j].weight)
           cellArray[i * COLUMNSIZE + j].className = "grid-cell";
+        if (grid[i][j].weight && grid[i][j].isVisited)
+          cellArray[i * COLUMNSIZE + j].className = "grid-cell weight";
+        grid[i][j].isVisited = false;
+
       }
     }
   }
@@ -203,7 +220,8 @@ const stopVisualizer = () => {
   visualizerFlag = false;
   resetBoardButton.disabled = false;
   clearBoardButton.disabled = false;
-  drawBoardButton.disabled = false;
+  selectPatternButton.disabled = false;
+  startSymbol.draggable = true;
   startButton.innerText = "start";
 };
 
@@ -213,10 +231,10 @@ const startVisualizerHandler = async (e) => {
   } else {
     clearBoardButton.disabled = true;
     resetBoardButton.disabled = true;
-    drawBoardButton.disabled = true;
+    selectPatternButton.disabled = true;
+    startSymbol.draggable = false;
     resetVisualization();
     visualizerFlag = true;
-    startSymbol.draggable = false;
     startButton.innerText = "Stop";
     await algorithms[selectedAlgorithm]();
     if (visualizerFlag)
@@ -249,16 +267,15 @@ let startSymbol = document.createElement('img');
 startSymbol.src = './assets/navigation_symbol.png';
 startSymbol.id = 'start-node-image'
 startNodeElement.appendChild(startSymbol);
-startNodeElement.className = "grid-cell start-node";
 startSymbol.draggable = true;
 startSymbol.addEventListener("dragstart", () => {
   nodeOnDrag = "startNode";
+  console.log("hello");
 });
 
 let destNodeElement = document.getElementById(
   `cell-${destCoordinates[0]}-${destCoordinates[1]}`
 );
-destNodeElement.className = "grid-cell dest-node";
 let destSymbol = document.createElement('img');
 destSymbol.src = './assets/dest_radio.png';
 destSymbol.id = 'dest-node-image';
@@ -271,24 +288,47 @@ destSymbol.addEventListener("dragstart", () => {
 const startButton = document.getElementById("start-button");
 const clearBoardButton = document.getElementById("clearBoard-button");
 const resetBoardButton = document.getElementById("reset-button");
-const mazeBoardButton = document.getElementById("maze-button");
-const drawBoardButton = document.getElementById("draw-button");
 startButton.disabled = true;
 
-const dropdownElement = document.getElementById("dropdown-container");
+const selectPatternDropdownElement = document.getElementById("select-pattern-dropdown-container");
+const selectAlgorithmDropdownElement = document.getElementById("select-algorithm-dropdown-container");
 const selectAlgorithmButton = document.getElementById("select-algorithm");
+const selectPatternButton = document.getElementById("select-pattern");
 
-const dropdownHandler = (event) => {
-  if (dropdownElement.style.display == "none") {
-    dropdownElement.style.display = "block";
+const selectAlgorithmDropdownHandler = (event) => {
+  if (selectAlgorithmDropdownElement.style.display == "none") {
+    selectAlgorithmDropdownElement.style.display = "block";
   }
-  else dropdownElement.style.display = "none";
+  else selectAlgorithmDropdownElement.style.display = "none";
 };
-// const onBlurDropdownHandler = () => {
-//   dropdownElement.style.display = "none";
-// };
+
+const selectPatternDropdownHandler = (event) => {
+  if (selectPatternDropdownElement.style.display == "none") {
+    selectPatternDropdownElement.style.display = "block";
+  }
+  else selectPatternDropdownElement.style.display = "none";
+};
+const selectPatternHandler = async (pattern) => {
+  selectedPattern = pattern;
+  clearBoard();
+  selectPatternButton.disabled = true;
+  clearBoardButton.disabled = true;
+  if (selectedAlgorithm.length)
+    startButton.disabled = true;
+  await algorithms[pattern]();
+  selectPatternButton.disabled = false;
+  clearBoardButton.disabled = false;
+  if (selectedAlgorithm.length)
+    startButton.disabled = false;
+}
+const onBlurSelectAlgorithmDropdownHandler = () => {
+  selectAlgorithmDropdownElement.style.display = "none";
+};
+const onBlurSelectPatternDropdownHandler = () => {
+  selectPatternDropdownElement.style.display = "none";
+};
 // const onBlurDropdownButtonHandler = () => {
-//   dropdownElement.style.display = "none";
+//   selectAlgorithmDropdownElement.style.display = "none";
 // };
 
 const selectAlgorithmHandler = (algorithm) => {
@@ -296,6 +336,6 @@ const selectAlgorithmHandler = (algorithm) => {
   selectAlgorithmButton.children[0].innerText = algorithm;
   startButton.disabled = false;
   clearBoardButton.disabled = false;
-  // dropdownElement.style.display = "none";
+  // selectAlgorithmDropdownElement.style.display = "none";
 };
 
