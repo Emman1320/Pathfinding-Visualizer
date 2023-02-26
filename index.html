@@ -15,7 +15,6 @@
           id="select-algorithm-container"
           class="dropdown-button-container"
           tabindex="0"
-          onblur="onBlurSelectAlgorithmDropdownHandler(this)"
           onclick="selectAlgorithmDropdownHandler(this)"
         >
           <button class="button-style dropdown-button" id="select-algorithm">
@@ -56,8 +55,6 @@
         <div
           id="pattern-algorithm-container"
           class="dropdown-button-container"
-          tabindex="0"
-          onblur="onBlurSelectPatternDropdownHandler(this)"
           onclick="selectPatternDropdownHandler(this)"
         >
           <button class="button-style dropdown-button" id="select-pattern">
@@ -86,12 +83,12 @@
               >
                 Randomized DFS
               </div>
-              <div
+              <!-- <div
                 onclick="selectPatternHandler('Recursive Division')"
                 class="dropdown-option"
               >
                 Recursive Division
-              </div>
+              </div> -->
               <div
                 onclick="selectPatternHandler('Random weights')"
                 class="dropdown-option"
@@ -144,6 +141,7 @@
     <script src="./DFS.js"></script>
     <script src="./Dijkstra.js"></script>
     <script src="./PrimsMaze.js"></script>
+    <script src="./RandomizedDFS.js"></script>
     <script src="./algorithmsHandler.js"></script>
   </body>
 </html>

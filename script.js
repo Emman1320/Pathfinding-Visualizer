@@ -1,14 +1,14 @@
 let gridHtml = "";
 let visualizerFlag = false;
-const startCoordinates = [10, 16];
-const destCoordinates = [10, 39];
+let startCoordinates = [13, 18];
+let destCoordinates = [13, 49];
 
-const ROWSIZE = 23;
-const COLUMNSIZE = 55;
+let ROWSIZE = 27;
+let COLUMNSIZE = 67;
 // const startCoordinates = [2, 1];
 // const destCoordinates = [2, 3];
-// const ROWSIZE = 4;
-// const COLUMNSIZE = 4;
+// const ROWSIZE = 5;
+// const COLUMNSIZE = 5;
 
 
 const SPEED = 0;
@@ -124,7 +124,7 @@ const onHoverCell = (e, i, j) => {
 };
 
 const onClickCell = (e, i, j) => {
-  console.log(grid[i][j].isStart );
+  console.log(grid[i][j].isStart);
   if (grid[i][j].isStart || grid[i][j].isFinish) { clickedDraggableNodes = true };
   if (grid[i][j].isWall || grid[i][j].weight) eraseGrid = true;
   else eraseGrid = false;
@@ -270,7 +270,6 @@ startNodeElement.appendChild(startSymbol);
 startSymbol.draggable = true;
 startSymbol.addEventListener("dragstart", () => {
   nodeOnDrag = "startNode";
-  console.log("hello");
 });
 
 let destNodeElement = document.getElementById(
@@ -308,14 +307,29 @@ const selectPatternDropdownHandler = (event) => {
   }
   else selectPatternDropdownElement.style.display = "none";
 };
+
 const selectPatternHandler = async (pattern) => {
-  selectedPattern = pattern;
   clearBoard();
   selectPatternButton.disabled = true;
   clearBoardButton.disabled = true;
   if (selectedAlgorithm.length)
     startButton.disabled = true;
-  await algorithms[pattern]();
+  switch (pattern) {
+    case "Randomized DFS":
+      await randomizedDFS(true);
+      break;
+    case "Prim's Algorithm":
+      await PrimsMaze();
+      break;
+    case "Recursive Division":
+      await recursiveDivision();
+      break;
+    case "Random weights":
+      await assignRandomWeights();
+      break;
+    default:
+      break;
+  }
   selectPatternButton.disabled = false;
   clearBoardButton.disabled = false;
   if (selectedAlgorithm.length)
@@ -327,9 +341,6 @@ const onBlurSelectAlgorithmDropdownHandler = () => {
 const onBlurSelectPatternDropdownHandler = () => {
   selectPatternDropdownElement.style.display = "none";
 };
-// const onBlurDropdownButtonHandler = () => {
-//   selectAlgorithmDropdownElement.style.display = "none";
-// };
 
 const selectAlgorithmHandler = (algorithm) => {
   selectedAlgorithm = algorithm;
