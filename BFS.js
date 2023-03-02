@@ -1,30 +1,33 @@
-const visitNodeBFS = async (node, queue, visited) => {
-  queue.push(node);
-  cellArray[node].className = "grid-cell visited";
-  visited[node] = true;
-  await sleep(50);
+const visitNodeBFS = async (queue, parentNode, node) => {
+  queue.push(node)
+  cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell visited";
+  node.isVisited = true;
+  node.previousNode = parentNode;
+  await sleep(SPEED);
 };
 
-const bfsOfGraph = async (startNode) => {
-  const visited = [];
-  for (let i = 0; i < NO_OF_NODES; i++) {
-    visited.push(false);
-  }
-  const queue = [];
-
-  await visitNodeBFS(startNode, queue, visited);
-
+const bfsOfGraph = async () => {
+  const queue = [grid[startCoordinates[0]][startCoordinates[1]]];
+  await visitNodeBFS(queue, null, grid[startCoordinates[0]][startCoordinates[1]])
   while (queue.length) {
-    let parentNode = queue.shift();
-    for (let i = 0; i < adjacencyList[parentNode].length; i++) {
-      if (visualizerFlag) {
-        const childNode = adjacencyList[parentNode][i];
-        if (!visited[childNode]) {
-          await visitNodeBFS(childNode, queue, visited);
-        }
-      } else {
-        return;
-      }
+    let node = queue.shift();
+    const i = node.row;
+    const j = node.col;
+    if (i !== 0 && !grid[i - 1][j].isVisited && !grid[i - 1][j].isWall) {
+      await visitNodeBFS(queue, node, grid[i - 1][j])
+      if (grid[i - 1][j].isFinish || !visualizerFlag) break;
+    }
+    if (j !== 0 && !grid[i][j - 1].isVisited && !grid[i][j - 1].isWall) {
+      await visitNodeBFS(queue, node, grid[i][j - 1])
+      if (grid[i][j - 1].isFinish || !visualizerFlag) break;
+    }
+    if (j !== COLUMNSIZE - 1 && !grid[i][j + 1].isVisited && !grid[i][j + 1].isWall) {
+      await visitNodeBFS(queue, node, grid[i][j + 1])
+      if (grid[i][j + 1].isFinish || !visualizerFlag) break;
+    }
+    if (i !== ROWSIZE - 1 && !grid[i + 1][j].isVisited && !grid[i + 1][j].isWall) {
+      await visitNodeBFS(queue, node, grid[i + 1][j])
+      if (grid[i + 1][j].isFinish || !visualizerFlag) break;
     }
   }
 };
