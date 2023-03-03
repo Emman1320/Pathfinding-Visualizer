@@ -30,7 +30,7 @@ const randomizedDFS = async (rivery) => {
                 node = stack.splice(parseInt(Math.random() * stack.length), 1)[0];
         }
         node.isVisited = true;
-        const i = node.row;
+        const i = node.row; 
         const j = node.col;
         if (node.previousNode) {
             let connectionRow = (node.row + node.previousNode.row) / 2;

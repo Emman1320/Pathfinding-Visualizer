@@ -1,6 +1,7 @@
 let gridHtml = "";
 let visualizerFlag = false;
-let startCoordinates = [13, 18];
+let patternFlag = false;
+let startCoordinates = [13, 19];
 let destCoordinates = [13, 49];
 
 let ROWSIZE = 27;
@@ -82,7 +83,6 @@ const wallTheCell = (e, i, j) => {
     e.className = "grid-cell pulseAnimation wall";
     cell.weight = 0;
     e.removeChild(e.childNodes[1]);
-
     return;
   }
   if (eraseGrid) {
@@ -114,7 +114,7 @@ const addWeightToCell = (e, i, j) => {
 }
 const onHoverCell = (e, i, j) => {
   if (grid[i][j].isStart || grid[i][j].isFinish) return;
-  if (clickedGrid) {
+  if (clickedGrid && !patternFlag) {
     if (!weightKeyPressed) {
       wallTheCell(e, i, j);
     } else {
@@ -124,10 +124,10 @@ const onHoverCell = (e, i, j) => {
 };
 
 const onClickCell = (e, i, j) => {
-  console.log(grid[i][j].isStart);
   if (grid[i][j].isStart || grid[i][j].isFinish) { clickedDraggableNodes = true };
   if (grid[i][j].isWall || grid[i][j].weight) eraseGrid = true;
   else eraseGrid = false;
+  if (patternFlag) return;
   if (weightKeyPressed) {
     addWeightToCell(e, i, j);
   } else {
@@ -164,7 +164,6 @@ const onDropNode = (event) => {
 
 // array of grid cells DOM
 const cellArray = document.getElementsByClassName("grid-cell");
-
 const assignRandomWeights = async () => {
   for (let i = 0; i < ROWSIZE; i++) {
     for (let j = 0; j < COLUMNSIZE; j++) {
@@ -246,7 +245,6 @@ const startVisualizerHandler = async (e) => {
 const drawShortestPath = async () => {
   let node = grid[destCoordinates[0]][destCoordinates[1]];
   let shortestPathArray = [];
-  console.log(node);
   while (node != null) {
     shortestPathArray.unshift(node);
     node = node.previousNode;
@@ -310,6 +308,7 @@ const selectPatternDropdownHandler = (event) => {
 
 const selectPatternHandler = async (pattern) => {
   clearBoard();
+  patternFlag = true;
   selectPatternButton.disabled = true;
   clearBoardButton.disabled = true;
   if (selectedAlgorithm.length)
@@ -325,7 +324,8 @@ const selectPatternHandler = async (pattern) => {
       await PrimsMaze();
       break;
     case "Recursive Division":
-      await recursiveDivision();
+      await wallTheBorders();
+      await recursiveDivision(0, 0, ROWSIZE - 1, COLUMNSIZE - 1);
       break;
     case "Random weights":
       await assignRandomWeights();
@@ -333,6 +333,7 @@ const selectPatternHandler = async (pattern) => {
     default:
       break;
   }
+  patternFlag = false;
   selectPatternButton.disabled = false;
   clearBoardButton.disabled = false;
   if (selectedAlgorithm.length)
