@@ -6,9 +6,9 @@ let destCoordinates = [13, 49];
 
 let ROWSIZE = 27;
 let COLUMNSIZE = 67;
-// const startCoordinates = [2, 1];
-// const destCoordinates = [2, 3];
-// const ROWSIZE = 5;
+// const startCoordinates = [1, 1];
+// const destCoordinates = [1, 3];
+// const ROWSIZE = 13;
 // const COLUMNSIZE = 5;
 
 

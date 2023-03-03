@@ -23,15 +23,15 @@ const recursiveDivision = async (startrow, startcol, endrow, endcol) => {
     if (width == 2 || height == 2) {
         return;
     }
-    // (Math.random() * (width + height))
+    // if ((Math.random() * (width + height)) < width) {
     if (height < width) {
         direction = "vertical";
     } else {
         direction = "horizontal";
     }
     if (direction == "vertical") {
-        let wallColumn = startcol + (parseInt((Math.random() * width - 2) / 2) * 2 + 2);
-        let passageCell = startrow + (parseInt((Math.random() * height - 1) / 2) * 2 + 1);
+        let wallColumn = startcol + (parseInt(Math.random() * ((width - 2) / 2)) * 2 + 2);
+        let passageCell = startrow + (parseInt(Math.random() * ((height) / 2)) * 2 + 1);
         for (let i = startrow; i < endrow; i++) {
             if (i == passageCell)
                 continue;
@@ -41,8 +41,8 @@ const recursiveDivision = async (startrow, startcol, endrow, endcol) => {
         await recursiveDivision(startrow, startcol, endrow, wallColumn);
         await recursiveDivision(startrow, wallColumn, endrow, endcol);
     } else {
-        let wallRow = startrow + (parseInt((Math.random() * height - 2) / 2) * 2 + 2);
-        let passageCell = startcol + (parseInt((Math.random() * width - 1) / 2) * 2 + 1);
+        let wallRow = startrow + (parseInt(Math.random() * ((height - 2) / 2)) * 2 + 2);
+        let passageCell = startcol + (parseInt(Math.random() * ((width) / 2)) * 2 + 1);
         for (let i = startcol; i < endcol; i++) {
             if (i == passageCell)
                 continue;
@@ -50,7 +50,7 @@ const recursiveDivision = async (startrow, startcol, endrow, endcol) => {
             await sleep(5);
 
         }
-       await recursiveDivision(startrow, startcol, wallRow, endcol);
-       await recursiveDivision(wallRow, startcol, endrow, endcol);
+        await recursiveDivision(startrow, startcol, wallRow, endcol);
+        await recursiveDivision(wallRow, startcol, endrow, endcol);
     }
 }
