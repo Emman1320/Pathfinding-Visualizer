@@ -3,9 +3,9 @@ let visualizerFlag = false;
 let patternFlag = false;
 let startCoordinates = [13, 19];
 let destCoordinates = [13, 49];
-
 let ROWSIZE = 27;
 let COLUMNSIZE = 67;
+
 // const startCoordinates = [1, 1];
 // const destCoordinates = [1, 3];
 // const ROWSIZE = 13;
