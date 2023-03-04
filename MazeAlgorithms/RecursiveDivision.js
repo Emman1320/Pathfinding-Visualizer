@@ -25,7 +25,7 @@ const recursiveDivision = async (startrow, startcol, endrow, endcol) => {
     }
     // if ((Math.random() * (width + height)) < width) {    
     // if (Math.random() < 0.5) {
-    if (height < width) {
+    if (height <= width) {
         direction = "vertical";
     } else {
         direction = "horizontal";
@@ -51,7 +51,7 @@ const recursiveDivision = async (startrow, startcol, endrow, endcol) => {
             await sleep(5);
 
         }
-        await recursiveDivision(wallRow, startcol, endrow, endcol);
         await recursiveDivision(startrow, startcol, wallRow, endcol);
+        await recursiveDivision(wallRow, startcol, endrow, endcol);
     }
 }
