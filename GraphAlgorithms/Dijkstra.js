@@ -43,7 +43,7 @@ const dijkstra = async () => {
         cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell visited";
         if (node.isFinish || !visualizerFlag) return;
         await sleep(SPEED);
-      
+
         if (i !== 0)
             updateNode(queue, node, grid[i - 1][j]);
 
@@ -57,4 +57,33 @@ const dijkstra = async () => {
             updateNode(queue, node, grid[i][j - 1]);
 
     }
+};
+const quickDijkstra = () => {
+    let destNode;
+    animationNodes = []
+    let startNode = grid[startCoordinates[0]][startCoordinates[1]];
+    const queue = [startNode];
+    startNode.distance = 0;
+    startNode.isVisited = true;
+    while (queue.length) {
+        let node = queue.pop();
+        const i = node.row;
+        const j = node.col;
+        animationNodes.push(node);
+        if (node.isFinish) { destNode = animationNodes.length };
+
+        if (i !== 0)
+            updateNode(queue, node, grid[i - 1][j]);
+
+        if (j !== COLUMNSIZE - 1)
+            updateNode(queue, node, grid[i][j + 1]);
+
+        if (i !== ROWSIZE - 1)
+            updateNode(queue, node, grid[i + 1][j]);
+
+        if (j !== 0)
+            updateNode(queue, node, grid[i][j - 1]);
+
+    }
+    return destNode;
 };

@@ -1,25 +1,29 @@
 let gridHtml = "";
 let visualizerFlag = false;
 let patternFlag = false;
-let startCoordinates = [13, 19];
-let destCoordinates = [13, 49];
+let startCoordinates = [13, 25];
+let destCoordinates = [13, 43];
 let ROWSIZE = 27;
 let COLUMNSIZE = 67;
-
+let timeline = {
+  allowTimeline: false,
+  boardChanged: true,
+};
 // const startCoordinates = [1, 1];
 // const destCoordinates = [1, 3];
 // const ROWSIZE = 13;
 // const COLUMNSIZE = 5;
-
-
 const SPEED = 0;
 const WEIGHT = 15;
+
+let animationNodes = []
 let clickedDraggableNodes = false;
 const NO_OF_NODES = ROWSIZE * COLUMNSIZE;
 let weightKeyPressed = false;
 let selectedAlgorithm = "";
 let selectedPattern = "";
 let nodeOnDrag = "";
+
 let grid = [];
 const createNode = (row, col) => {
   return {
@@ -37,16 +41,18 @@ const createNode = (row, col) => {
 
 // grid formation and fill adjacent matrix with 1 for every edge
 for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
-  gridHtml += `<div class="grid-row" id='row-${rowNumber}'>`;
+  gridHtml += `<div class="grid-row" id='row-${rowNumber}' ondragover='rowDragOver(this)'>`;
   grid.push([]);
   for (let colNumber = 0; colNumber < COLUMNSIZE; colNumber++) {
-    gridHtml += `<div id='cell-${rowNumber}-${colNumber}' class='grid-cell' onmouseover='onHoverCell(this, ${rowNumber}, ${colNumber})' onmousedown='onClickCell(this, ${rowNumber}, ${colNumber})' ondrop='onDropNode(event)' ondragover= 'allowDropHandler(event)'><div class="grid-cell-animation-node"></div></div>`;
+    gridHtml += `<div id='cell-${rowNumber}-${colNumber}' class='grid-cell' onmouseover='onHoverCell(this, ${rowNumber}, ${colNumber})' onmousedown='onClickCell(this, ${rowNumber}, ${colNumber})' ondrop='onDropNode(event)' ondragover='allowDropHandler(event)'><div class="grid-cell-animation-node"></div></div>`;
     grid[rowNumber].push(createNode(rowNumber, colNumber));
   }
   gridHtml += "</div>";
 }
 
-
+const rowDragOver = (e) => {
+  return;
+}
 document.getElementById("grid").innerHTML = gridHtml;
 document.getElementById("grid").addEventListener("dragstart", (e) => {
   if (!clickedDraggableNodes)
@@ -66,6 +72,7 @@ const weightToggle = (e) => {
     weightKeyPressed = true;
   }
 }
+
 let clickedGrid = false;
 let eraseGrid = false;
 const gridTouchHandler = (e, isClicked) => {
@@ -113,7 +120,7 @@ const addWeightToCell = (e, i, j) => {
   }
 }
 const onHoverCell = (e, i, j) => {
-  if (grid[i][j].isStart || grid[i][j].isFinish) return;
+  if (grid[i][j].isStart || grid[i][j].isFinish || nodeOnDrag.length) return;
   if (clickedGrid && !patternFlag) {
     if (!weightKeyPressed) {
       wallTheCell(e, i, j);
@@ -124,7 +131,11 @@ const onHoverCell = (e, i, j) => {
 };
 
 const onClickCell = (e, i, j) => {
-  if (grid[i][j].isStart || grid[i][j].isFinish) { clickedDraggableNodes = true };
+  if (grid[i][j].isStart || grid[i][j].isFinish) {
+    clickedDraggableNodes = true;
+    return;
+  };
+  timeline.boardChanged = true;
   if (grid[i][j].isWall || grid[i][j].weight) eraseGrid = true;
   else eraseGrid = false;
   if (patternFlag) return;
@@ -134,14 +145,99 @@ const onClickCell = (e, i, j) => {
     wallTheCell(e, i, j);
   }
 }
-
+const resetQuickVisualisation = () => {
+  for (let i = 0; i < ROWSIZE; i++) {
+    for (let j = 0; j < COLUMNSIZE; j++) {
+      if (grid[i][j].isVisited) {
+        grid[i][j].previousNode = null;
+        if (!grid[i][j].isWall && !grid[i][j].weight)
+          cellArray[i * COLUMNSIZE + j].className = "grid-cell";
+        if (grid[i][j].weight && grid[i][j].isVisited)
+          cellArray[i * COLUMNSIZE + j].className = "grid-cell weight";
+        grid[i][j].isVisited = false;
+      }
+    }
+  }
+}
+let prevNodeId = "";
+let prevDestIndex = 0;
 const allowDropHandler = (event) => {
   event.preventDefault();
+  if (event.target.parentElement.className == "grid-row") { return }
+  if (prevNodeId != event.target.parentElement?.id && timeline.allowTimeline) {
+    // if (nodeOnDrag == "startNode") {
+    //   grid[prevTempCoordinates[0]][[prevTempCoordinates[1]]].isStart = false;
+    //   grid[prevTempCoordinates[0]][[prevTempCoordinates[1]]].isStart = true;
+
+    //   nodeElement.appendChild(startSymbol);
+    //   resetQuickVisualisation();
+    //   quickVisitBfsOfGraph(prevTempCoordinates);
+    //   quickDrawShortestPath(destCoordinates);
+    // }
+    // else
+    const nodeElement = event.target.parentElement;
+    // if (grid[destCoordinates[0]][[destCoordinates[1]]].isWall) {
+    //   cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className = "grid-cell pulseAnimation";
+    // }
+    if (!grid[destCoordinates[0]][[destCoordinates[1]]].isVisited) {
+      timeline.boardChanged = true;
+      cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className = "grid-cell";
+
+    }
+    let coordinates = nodeElement.id.split("-").slice(1).map(i => +i);
+    if (grid[coordinates[0]][coordinates[1]].isWall || grid[coordinates[0]][coordinates[1]].isStart || grid[coordinates[0]][[coordinates[1]]].weight || !grid[coordinates[0]][[coordinates[1]]].isVisited) {
+      return;
+    }
+    if (nodeOnDrag == "destNode") {
+      grid[destCoordinates[0]][[destCoordinates[1]]].isFinish = false;
+      clearQuickDrawShortestPath(destCoordinates);
+      destCoordinates = coordinates;
+      grid[destCoordinates[0]][[destCoordinates[1]]].isFinish = true;
+      nodeElement.appendChild(destSymbol);
+      if (prevNodeId.length == 0 || timeline.boardChanged) {
+        resetQuickVisualisation();
+        prevDestIndex = algorithms[selectedAlgorithm].quick();
+        for (const node of animationNodes) {
+          cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-visit";
+          if (node.isFinish) break;
+        }
+        timeline.boardChanged = false;
+      }
+      else if (!timeline.boardChanged) {
+
+        if (cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className !== "grid-cell") {
+          for (let i = prevDestIndex; i >= 0; i--) {
+            let node = animationNodes[i];
+            if (node.isFinish) {
+              prevDestIndex = i;
+              break;
+            }
+            cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell";
+          }
+        } else {
+          for (let i = prevDestIndex; i < NO_OF_NODES; i++) {
+            let node = animationNodes[i];
+            if (node.isFinish) {
+              prevDestIndex = i;
+              break;
+            }
+            cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-visit";
+          }
+        }
+      }
+      prevNodeId = nodeElement?.id;
+      quickDrawShortestPath(destCoordinates);
+    }
+  }
 };
+
 
 const onDropNode = (event) => {
   clickedGrid = false;
   event.preventDefault();
+  if (event.target.parentElement.className == "grid-row") { return }
+  let coordinates = event.target.parentElement.id.split("-").slice(1).map(i => +i);
+  if (grid[coordinates[0]][coordinates[1]].weight || grid[coordinates[0]][coordinates[1]].isWall) return;
   if (nodeOnDrag == "startNode") {
     startNodeElement = event.target.parentElement;
     startNodeElement.appendChild(startSymbol);
@@ -149,6 +245,8 @@ const onDropNode = (event) => {
     startCoordinates[0] = +startNodeElement.id.split("-")[1];
     startCoordinates[1] = +startNodeElement.id.split("-")[2];
     grid[startCoordinates[0]][startCoordinates[1]].isWall = false;
+    // cellArray[startCoordinates[0] * COLUMNSIZE + startCoordinates[1]].className = "grid-cell";
+
     grid[startCoordinates[0]][startCoordinates[1]].isStart = true;
   } else if (nodeOnDrag == "destNode") {
     destNodeElement = event.target.parentElement;
@@ -157,8 +255,11 @@ const onDropNode = (event) => {
     destCoordinates[0] = +destNodeElement.id.split("-")[1];
     destCoordinates[1] = +destNodeElement.id.split("-")[2];
     grid[destCoordinates[0]][destCoordinates[1]].isWall = false;
+    // cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className = "grid-cell"; 
     grid[destCoordinates[0]][destCoordinates[1]].isFinish = true;
   }
+  nodeOnDrag = ""
+  animationNodes = [];
   clickedDraggableNodes = false;
 };
 
@@ -196,6 +297,9 @@ const clearBoard = () => {
       cellArray[i].removeChild(cellArray[i].childNodes[1]);
     }
   }
+  prevNodeId = "";
+  timeline.allowTimeline = false;
+  startSymbol.draggable = true;
 };
 
 
@@ -209,10 +313,13 @@ const resetVisualization = () => {
         if (grid[i][j].weight && grid[i][j].isVisited)
           cellArray[i * COLUMNSIZE + j].className = "grid-cell weight";
         grid[i][j].isVisited = false;
-
       }
     }
   }
+  prevNodeId = "";
+  if (!visualizerFlag)
+    startSymbol.draggable = true;
+  timeline.allowTimeline = false;
 }
 
 const stopVisualizer = () => {
@@ -220,7 +327,7 @@ const stopVisualizer = () => {
   resetBoardButton.disabled = false;
   clearBoardButton.disabled = false;
   selectPatternButton.disabled = false;
-  startSymbol.draggable = true;
+  // startSymbol.draggable = true;
   startButton.innerText = "start";
 };
 
@@ -232,14 +339,13 @@ const startVisualizerHandler = async (e) => {
     resetBoardButton.disabled = true;
     selectPatternButton.disabled = true;
     startSymbol.draggable = false;
-    resetVisualization();
     visualizerFlag = true;
+    resetVisualization();
     startButton.innerText = "Stop";
-    await algorithms[selectedAlgorithm]();
+    await algorithms[selectedAlgorithm].regular();
     if (visualizerFlag)
       await drawShortestPath();
     stopVisualizer();
-
   }
 };
 const drawShortestPath = async () => {
@@ -254,8 +360,28 @@ const drawShortestPath = async () => {
     cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell shortestPath";
     await sleep(20);
   }
+  timeline.allowTimeline = true;
 }
-
+const quickDrawShortestPath = (destCoordinates) => {
+  let node = grid[destCoordinates[0]][destCoordinates[1]];
+  while (node != null) {
+    cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-shortestPath";
+    node = node.previousNode;
+  }
+  // timeline.allowTimeline = true;
+}
+const clearQuickDrawShortestPath = (destCoordinates) => {
+  let node = grid[destCoordinates[0]][destCoordinates[1]];
+  // !cellArray[node.row * COLUMNSIZE + node.col].classList.contains("quick-shortestPath") && !cellArray[node.row * COLUMNSIZE + node.col].classList.contains("shortestPath")
+  while (node != null) {
+    if (node.isWall)
+      cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell pulseAnimation";
+    else
+      cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-visit";
+    node = node.previousNode;
+  }
+  // timeline.allowTimeline = true;
+}
 //the starting cell
 let startNodeElement = document.getElementById(
   `cell-${startCoordinates[0]}-${startCoordinates[1]}`
@@ -266,7 +392,8 @@ startSymbol.src = './assets/navigation_symbol.png';
 startSymbol.id = 'start-node-image'
 startNodeElement.appendChild(startSymbol);
 startSymbol.draggable = true;
-startSymbol.addEventListener("dragstart", () => {
+startSymbol.addEventListener("dragstart", (e) => {
+  // const [i, j] = e.target.parentElement.id.split("-").slice(1).map(i => +i);
   nodeOnDrag = "startNode";
 });
 
@@ -353,4 +480,3 @@ const selectAlgorithmHandler = (algorithm) => {
   clearBoardButton.disabled = false;
   // selectAlgorithmDropdownElement.style.display = "none";
 };
-

@@ -223,6 +223,12 @@ nav {
 .wall {
   /* background-color: #0c1c51; */
 }
+.quick-visit {
+  background-color: #ff5858;
+}
+.quick-shortestPath {
+  background-color: yellow;
+}
 @keyframes twinkle {
   0% {
     background-color: rgba(255, 255, 0, 0.436);

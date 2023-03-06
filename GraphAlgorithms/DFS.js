@@ -33,3 +33,39 @@ const dfsOfGraph = async () => {
     }
   }
 };
+// const quickVisitNodeDFS = (node) => {
+//   if (node.isVisited) {
+//     cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell";
+//   }
+//   cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell visited";
+// };
+const quickDfsOfGraph = () => {
+  const stack = [grid[startCoordinates[0]][startCoordinates[1]]];
+  let destNode;
+  animationNodes = []
+  while (stack.length) {
+    let node = stack.pop();
+    node.isVisited = true;
+    animationNodes.push(node);
+    if (node.isFinish) { destNode = animationNodes.length };
+    const i = node.row;
+    const j = node.col;
+    if (j !== 0 && !grid[i][j - 1].isVisited && !grid[i][j - 1].isWall) {
+      stack.push(grid[i][j - 1]);
+      grid[i][j - 1].previousNode = node;
+    }
+    if (i !== ROWSIZE - 1 && !grid[i + 1][j].isVisited && !grid[i + 1][j].isWall) {
+      stack.push(grid[i + 1][j]);
+      grid[i + 1][j].previousNode = node;
+    }
+    if (j !== COLUMNSIZE - 1 && !grid[i][j + 1].isVisited && !grid[i][j + 1].isWall) {
+      stack.push(grid[i][j + 1]);
+      grid[i][j + 1].previousNode = node;
+    }
+    if (i !== 0 && !grid[i - 1][j].isVisited && !grid[i - 1][j].isWall) {
+      stack.push(grid[i - 1][j]);
+      grid[i - 1][j].previousNode = node;
+    }
+  }
+  return destNode;
+};
