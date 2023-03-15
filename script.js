@@ -16,7 +16,7 @@ let timeline = {
 const SPEED = 0;
 const WEIGHT = 15;
 
-let animationNodes = []
+let animationNodes = [];
 let clickedDraggableNodes = false;
 const NO_OF_NODES = ROWSIZE * COLUMNSIZE;
 let weightKeyPressed = false;
@@ -52,16 +52,14 @@ for (let rowNumber = 0; rowNumber < ROWSIZE; rowNumber++) {
 
 const rowDragOver = (e) => {
   return;
-}
+};
 document.getElementById("grid").innerHTML = gridHtml;
 document.getElementById("grid").addEventListener("dragstart", (e) => {
-  if (!clickedDraggableNodes)
-    e.preventDefault();
+  if (!clickedDraggableNodes) e.preventDefault();
 });
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
 
 const weightToggle = (e) => {
   if (weightKeyPressed) {
@@ -71,7 +69,7 @@ const weightToggle = (e) => {
     e.textContent = "draw wall";
     weightKeyPressed = true;
   }
-}
+};
 
 let clickedGrid = false;
 let eraseGrid = false;
@@ -81,10 +79,11 @@ const gridTouchHandler = (e, isClicked) => {
 const clearTheWall = (e, i, j) => {
   grid[i][j].isWall = false;
   e.className = "grid-cell visited";
-}
+};
 const wallTheCell = (e, i, j) => {
   let cell = grid[i][j];
   if (cell.weight) {
+    timeline.boardChanged = true;
     cell.isWall = true;
     eraseGrid = false;
     e.className = "grid-cell pulseAnimation wall";
@@ -94,31 +93,34 @@ const wallTheCell = (e, i, j) => {
   }
   if (eraseGrid) {
     cell.isWall = false;
+    timeline.boardChanged = true;
     e.className = "grid-cell";
     return;
   }
   if (!cell.isWall && !cell.isStart && !cell.isFinish) {
+    timeline.boardChanged = true;
     cell.isWall = true;
     e.className = "grid-cell pulseAnimation wall";
   }
 };
 const addWeightToCell = (e, i, j) => {
   if (eraseGrid) {
-    if (e.childNodes[1])
-      e.removeChild(e.childNodes[1]);
+    timeline.boardChanged = true;
+    if (e.childNodes[1]) e.removeChild(e.childNodes[1]);
     grid[i][j].weight = 0;
     cellArray[i * COLUMNSIZE + j].className = "grid-cell";
     return;
   }
   if (!e.childNodes[1] && !grid[i][j].isStart && !grid[i][j].isFinish) {
-    let img = document.createElement('img');
+    timeline.boardChanged = true;
+    let img = document.createElement("img");
     img.className = "weight-node-image";
     img.src = "./assets/weight_symbol.png";
     e.appendChild(img);
     grid[i][j].weight = WEIGHT;
     cellArray[i * COLUMNSIZE + j].className = "grid-cell weight";
   }
-}
+};
 const onHoverCell = (e, i, j) => {
   if (grid[i][j].isStart || grid[i][j].isFinish || nodeOnDrag.length) return;
   if (clickedGrid && !patternFlag) {
@@ -134,8 +136,7 @@ const onClickCell = (e, i, j) => {
   if (grid[i][j].isStart || grid[i][j].isFinish) {
     clickedDraggableNodes = true;
     return;
-  };
-  timeline.boardChanged = true;
+  }
   if (grid[i][j].isWall || grid[i][j].weight) eraseGrid = true;
   else eraseGrid = false;
   if (patternFlag) return;
@@ -144,8 +145,9 @@ const onClickCell = (e, i, j) => {
   } else {
     wallTheCell(e, i, j);
   }
-}
+};
 const resetQuickVisualisation = () => {
+  animationNodes = [];
   for (let i = 0; i < ROWSIZE; i++) {
     for (let j = 0; j < COLUMNSIZE; j++) {
       if (grid[i][j].isVisited) {
@@ -158,12 +160,14 @@ const resetQuickVisualisation = () => {
       }
     }
   }
-}
+};
 let prevNodeId = "";
 let prevDestIndex = 0;
 const allowDropHandler = (event) => {
   event.preventDefault();
-  if (event.target.parentElement.className == "grid-row") { return }
+  if (event.target.parentElement.className == "grid-row") {
+    return;
+  }
   if (prevNodeId != event.target.parentElement?.id && timeline.allowTimeline) {
     // if (nodeOnDrag == "startNode") {
     //   grid[prevTempCoordinates[0]][[prevTempCoordinates[1]]].isStart = false;
@@ -181,11 +185,20 @@ const allowDropHandler = (event) => {
     // }
     if (!grid[destCoordinates[0]][[destCoordinates[1]]].isVisited) {
       timeline.boardChanged = true;
-      cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className = "grid-cell";
-
+      cellArray[
+        destCoordinates[0] * COLUMNSIZE + destCoordinates[1]
+      ].className = "grid-cell";
     }
-    let coordinates = nodeElement.id.split("-").slice(1).map(i => +i);
-    if (grid[coordinates[0]][coordinates[1]].isWall || grid[coordinates[0]][coordinates[1]].isStart || grid[coordinates[0]][[coordinates[1]]].weight || !grid[coordinates[0]][[coordinates[1]]].isVisited) {
+    let coordinates = nodeElement.id
+      .split("-")
+      .slice(1)
+      .map((i) => +i);
+    if (
+      grid[coordinates[0]][coordinates[1]].isWall ||
+      grid[coordinates[0]][coordinates[1]].isStart ||
+      grid[coordinates[0]][[coordinates[1]]].weight
+      // || !grid[coordinates[0]][[coordinates[1]]].isVisited
+    ) {
       return;
     }
     if (nodeOnDrag == "destNode") {
@@ -194,18 +207,24 @@ const allowDropHandler = (event) => {
       destCoordinates = coordinates;
       grid[destCoordinates[0]][[destCoordinates[1]]].isFinish = true;
       nodeElement.appendChild(destSymbol);
-      if (prevNodeId.length == 0 || timeline.boardChanged) {
+      if (
+        prevNodeId.length == 0 ||
+        timeline.boardChanged ||
+        prevDestIndex === undefined
+      ) {
         resetQuickVisualisation();
         prevDestIndex = algorithms[selectedAlgorithm].quick();
         for (const node of animationNodes) {
-          cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-visit";
+          cellArray[node.row * COLUMNSIZE + node.col].className =
+            "grid-cell quick-visit";
           if (node.isFinish) break;
         }
         timeline.boardChanged = false;
-      }
-      else if (!timeline.boardChanged) {
-
-        if (cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className !== "grid-cell") {
+      } else if (!timeline.boardChanged) {
+        if (
+          cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]]
+            .className !== "grid-cell"
+        ) {
           for (let i = prevDestIndex; i >= 0; i--) {
             let node = animationNodes[i];
             if (node.isFinish) {
@@ -215,29 +234,39 @@ const allowDropHandler = (event) => {
             cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell";
           }
         } else {
-          for (let i = prevDestIndex; i < NO_OF_NODES; i++) {
+          for (let i = prevDestIndex; i < animationNodes.length; i++) {
             let node = animationNodes[i];
             if (node.isFinish) {
               prevDestIndex = i;
               break;
             }
-            cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-visit";
+            cellArray[node.row * COLUMNSIZE + node.col].className =
+              "grid-cell quick-visit";
           }
         }
       }
       prevNodeId = nodeElement?.id;
-      quickDrawShortestPath(destCoordinates);
+      if (grid[coordinates[0]][[coordinates[1]]].isVisited)
+        quickDrawShortestPath(destCoordinates);
     }
   }
 };
 
-
 const onDropNode = (event) => {
   clickedGrid = false;
   event.preventDefault();
-  if (event.target.parentElement.className == "grid-row") { return }
-  let coordinates = event.target.parentElement.id.split("-").slice(1).map(i => +i);
-  if (grid[coordinates[0]][coordinates[1]].weight || grid[coordinates[0]][coordinates[1]].isWall) return;
+  if (event.target.parentElement.className == "grid-row") {
+    return;
+  }
+  let coordinates = event.target.parentElement.id
+    .split("-")
+    .slice(1)
+    .map((i) => +i);
+  if (
+    grid[coordinates[0]][coordinates[1]].weight ||
+    grid[coordinates[0]][coordinates[1]].isWall
+  )
+    return;
   if (nodeOnDrag == "startNode") {
     startNodeElement = event.target.parentElement;
     startNodeElement.appendChild(startSymbol);
@@ -255,11 +284,10 @@ const onDropNode = (event) => {
     destCoordinates[0] = +destNodeElement.id.split("-")[1];
     destCoordinates[1] = +destNodeElement.id.split("-")[2];
     grid[destCoordinates[0]][destCoordinates[1]].isWall = false;
-    // cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className = "grid-cell"; 
+    // cellArray[destCoordinates[0] * COLUMNSIZE + destCoordinates[1]].className = "grid-cell";
     grid[destCoordinates[0]][destCoordinates[1]].isFinish = true;
   }
-  nodeOnDrag = ""
-  animationNodes = [];
+  nodeOnDrag = "";
   clickedDraggableNodes = false;
 };
 
@@ -279,7 +307,7 @@ const assignRandomWeights = async () => {
         addWeightToCell(cellArray[i * COLUMNSIZE + j], i, j);
     }
   }
-}
+};
 
 //function to clear the board and stop the visualizer
 const clearBoard = () => {
@@ -302,7 +330,6 @@ const clearBoard = () => {
   startSymbol.draggable = true;
 };
 
-
 const resetVisualization = () => {
   for (let i = 0; i < ROWSIZE; i++) {
     for (let j = 0; j < COLUMNSIZE; j++) {
@@ -317,10 +344,9 @@ const resetVisualization = () => {
     }
   }
   prevNodeId = "";
-  if (!visualizerFlag)
-    startSymbol.draggable = true;
+  if (!visualizerFlag) startSymbol.draggable = true;
   timeline.allowTimeline = false;
-}
+};
 
 const stopVisualizer = () => {
   visualizerFlag = false;
@@ -343,8 +369,7 @@ const startVisualizerHandler = async (e) => {
     resetVisualization();
     startButton.innerText = "Stop";
     await algorithms[selectedAlgorithm].regular();
-    if (visualizerFlag)
-      await drawShortestPath();
+    if (visualizerFlag) await drawShortestPath();
     stopVisualizer();
   }
 };
@@ -357,39 +382,43 @@ const drawShortestPath = async () => {
   }
   for (let i = 0; i < shortestPathArray.length && visualizerFlag; i++) {
     node = shortestPathArray[i];
-    cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell shortestPath";
+    cellArray[node.row * COLUMNSIZE + node.col].className =
+      "grid-cell shortestPath";
     await sleep(20);
   }
   timeline.allowTimeline = true;
-}
+};
 const quickDrawShortestPath = (destCoordinates) => {
   let node = grid[destCoordinates[0]][destCoordinates[1]];
   while (node != null) {
-    cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-shortestPath";
+    cellArray[node.row * COLUMNSIZE + node.col].className =
+      "grid-cell quick-shortestPath";
     node = node.previousNode;
   }
   // timeline.allowTimeline = true;
-}
+};
 const clearQuickDrawShortestPath = (destCoordinates) => {
   let node = grid[destCoordinates[0]][destCoordinates[1]];
   // !cellArray[node.row * COLUMNSIZE + node.col].classList.contains("quick-shortestPath") && !cellArray[node.row * COLUMNSIZE + node.col].classList.contains("shortestPath")
   while (node != null) {
     if (node.isWall)
-      cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell pulseAnimation";
-    else
-      cellArray[node.row * COLUMNSIZE + node.col].className = "grid-cell quick-visit";
+      cellArray[node.row * COLUMNSIZE + node.col].className =
+        "grid-cell pulseAnimation";
+    else if (node.isVisited)
+      cellArray[node.row * COLUMNSIZE + node.col].className =
+        "grid-cell quick-visit";
     node = node.previousNode;
   }
   // timeline.allowTimeline = true;
-}
+};
 //the starting cell
 let startNodeElement = document.getElementById(
   `cell-${startCoordinates[0]}-${startCoordinates[1]}`
 );
 
-let startSymbol = document.createElement('img');
-startSymbol.src = './assets/navigation_symbol.png';
-startSymbol.id = 'start-node-image'
+let startSymbol = document.createElement("img");
+startSymbol.src = "./assets/navigation_symbol.png";
+startSymbol.id = "start-node-image";
 startNodeElement.appendChild(startSymbol);
 startSymbol.draggable = true;
 startSymbol.addEventListener("dragstart", (e) => {
@@ -400,9 +429,9 @@ startSymbol.addEventListener("dragstart", (e) => {
 let destNodeElement = document.getElementById(
   `cell-${destCoordinates[0]}-${destCoordinates[1]}`
 );
-let destSymbol = document.createElement('img');
-destSymbol.src = './assets/dest_radio.png';
-destSymbol.id = 'dest-node-image';
+let destSymbol = document.createElement("img");
+destSymbol.src = "./assets/dest_radio.png";
+destSymbol.id = "dest-node-image";
 destNodeElement.appendChild(destSymbol);
 destSymbol.draggable = true;
 destSymbol.addEventListener("dragstart", () => {
@@ -414,23 +443,25 @@ const clearBoardButton = document.getElementById("clearBoard-button");
 const resetBoardButton = document.getElementById("reset-button");
 startButton.disabled = true;
 
-const selectPatternDropdownElement = document.getElementById("select-pattern-dropdown-container");
-const selectAlgorithmDropdownElement = document.getElementById("select-algorithm-dropdown-container");
+const selectPatternDropdownElement = document.getElementById(
+  "select-pattern-dropdown-container"
+);
+const selectAlgorithmDropdownElement = document.getElementById(
+  "select-algorithm-dropdown-container"
+);
 const selectAlgorithmButton = document.getElementById("select-algorithm");
 const selectPatternButton = document.getElementById("select-pattern");
 
 const selectAlgorithmDropdownHandler = (event) => {
   if (selectAlgorithmDropdownElement.style.display == "none") {
     selectAlgorithmDropdownElement.style.display = "block";
-  }
-  else selectAlgorithmDropdownElement.style.display = "none";
+  } else selectAlgorithmDropdownElement.style.display = "none";
 };
 
 const selectPatternDropdownHandler = (event) => {
   if (selectPatternDropdownElement.style.display == "none") {
     selectPatternDropdownElement.style.display = "block";
-  }
-  else selectPatternDropdownElement.style.display = "none";
+  } else selectPatternDropdownElement.style.display = "none";
 };
 
 const selectPatternHandler = async (pattern) => {
@@ -438,8 +469,7 @@ const selectPatternHandler = async (pattern) => {
   patternFlag = true;
   selectPatternButton.disabled = true;
   clearBoardButton.disabled = true;
-  if (selectedAlgorithm.length)
-    startButton.disabled = true;
+  if (selectedAlgorithm.length) startButton.disabled = true;
   switch (pattern) {
     case "Randomized DFS (high river)":
       await randomizedDFS(true);
@@ -463,9 +493,8 @@ const selectPatternHandler = async (pattern) => {
   patternFlag = false;
   selectPatternButton.disabled = false;
   clearBoardButton.disabled = false;
-  if (selectedAlgorithm.length)
-    startButton.disabled = false;
-}
+  if (selectedAlgorithm.length) startButton.disabled = false;
+};
 const onBlurSelectAlgorithmDropdownHandler = () => {
   selectAlgorithmDropdownElement.style.display = "none";
 };

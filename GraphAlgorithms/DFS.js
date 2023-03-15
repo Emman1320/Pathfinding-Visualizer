@@ -42,7 +42,6 @@ const dfsOfGraph = async () => {
 const quickDfsOfGraph = () => {
   const stack = [grid[startCoordinates[0]][startCoordinates[1]]];
   let destNode;
-  animationNodes = []
   while (stack.length) {
     let node = stack.pop();
     node.isVisited = true;

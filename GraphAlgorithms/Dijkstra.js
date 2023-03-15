@@ -60,7 +60,6 @@ const dijkstra = async () => {
 };
 const quickDijkstra = () => {
     let destNode;
-    animationNodes = []
     let startNode = grid[startCoordinates[0]][startCoordinates[1]];
     const queue = [startNode];
     startNode.distance = 0;

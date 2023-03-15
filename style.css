@@ -223,7 +223,7 @@ nav {
 .wall {
   /* background-color: #0c1c51; */
 }
-.quick-visit {
+.quick-visit .grid-cell-animation-node {
   background-color: #ff5858;
 }
 .quick-shortestPath {

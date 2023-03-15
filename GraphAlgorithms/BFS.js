@@ -41,7 +41,6 @@ const quickVisitNodeBFS = (queue, parentNode, node) => {
 
 const quickBfsOfGraph = () => {
   let destNode;
-  animationNodes = []
   const queue = [grid[startCoordinates[0]][startCoordinates[1]]];
   quickVisitNodeBFS(queue, null, grid[startCoordinates[0]][startCoordinates[1]]);
   while (queue.length) {
