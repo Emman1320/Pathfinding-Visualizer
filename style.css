@@ -203,7 +203,7 @@ nav {
   animation: twinkle 0.05s ease forwards;
 }
 .visited .grid-cell-animation-node {
-  animation: visited-gradient 1.5s ease-out alternate forwards;
+  animation: visited-gradient 1.5s 0.05s ease-out alternate forwards;
 }
 .revisited .grid-cell-animation-node {
   animation: visited-gradient 1.5s ease-out alternate forwards;
@@ -213,12 +213,13 @@ nav {
   -webkit-filter: grayscale(1) invert(1);
   filter: grayscale(1) invert(1);
 }
+
 .shortestPath {
   animation: 0.5s forwards shortestPath;
 }
 
 .pulseAnimation {
-  animation: wall 0.2s ease-out forwards, wall-gradient 0.2s ease forwards;
+  animation: wall 0.3s ease-out forwards, wall-gradient 0.1s ease forwards;
 }
 .wall {
   /* background-color: #0c1c51; */
@@ -243,8 +244,8 @@ nav {
     transform: scale(0);
     border-radius: 50%;
   }
-  50% {
-    /* border-radius: 50%; */
+  75% {
+    transform: scale(1.2);
   }
   100% {
     transform: scale(1);
@@ -307,6 +308,7 @@ nav {
     background-color: #cb1c8d;
   }
 } */
+
 @keyframes visited-gradient {
   0% {
     transform: scale(0.3);
@@ -328,6 +330,7 @@ nav {
     background-color: #ff5858;
   }
 }
+
 @media only screen and (max-width: 1600px) {
   body {
     zoom: 0.9;
